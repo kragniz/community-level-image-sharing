@@ -46,3 +46,64 @@ Use cases
 
     b) Since it's not a "public" image any more, it doesn't imply the same
     level of support as a provider-supplied public image.
+
+
+Proposed change
+===============
+
+An additional value for ``visibility`` will be added, named ``'community'``.
+This makes the possible values of ``visibility``:
+
+::
+
+    ['public', 'private', 'shared', 'community']
+
+Each of these has the following meaning:
+
+* **public**: All users:
+
+  - have this image in default ``image-list``
+
+  - can see ``image-detail`` for this image
+
+  - can boot from this image
+
+* **private**: Users with ``tenantId == tenantId(owner)`` only:
+
+  - have this image in the default ``image-list``
+
+  - see ``image-detail`` for this image
+
+  - can boot from this image
+
+* **shared**:
+
+  - Users with ``tenantId == tenantId(owner)``
+
+    + have this image in the default ``image-list``
+
+    + see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` of the image
+
+    + can see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` with ``member_status == 'accepted'``
+
+    + have this image in their default ``image-list``
+
+* **community**:
+
+  - All users:
+
+    + can see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
+
+    + have this image in their default ``image-list``
