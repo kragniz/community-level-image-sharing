@@ -16,8 +16,8 @@ Currently, images must either be public, private or shared. There is no
 provision for an image to be available for use by users other than the owner of
 the image without making the image either public or explicitly shared by the
 owner of the image with other users. If the number of users who require access
-to the image is large, the explicit sharing can become a burden on the owner of
-the image.
+to the image is large, the overhead of explicit sharing can become a burden on
+the owner of the image.
 
 
 Use cases
@@ -51,14 +51,16 @@ Use cases
 Proposed change
 ===============
 
-An additional value for ``visibility`` will be added, named ``'community'``.
-This makes the possible values of ``visibility``:
+An additional value for the ``visibility`` enum will be added in the JSON
+schema, named ``'community'``.  This makes the possible values of
+``visibility``:
 
 ::
 
     ['public', 'private', 'shared', 'community']
 
-Each of these has the following meaning:
+An image with with a certain value for ``visibility`` has the following
+properties:
 
 * **public**: All users:
 
@@ -107,3 +109,34 @@ Each of these has the following meaning:
   - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
 
     + have this image in their default ``image-list``
+
+
+Data model impact
+-----------------
+
+Schema changes
+~~~~~~~~~~~~~~
+
+The visibility of the image will be will be stored in the database in the
+images table in a new column named ``visibility``. This contains one of the
+values in the set of ``['public', 'private', 'shared', 'community']``.
+
+The default value for ``visibility`` is ``'private'``.
+
+This change makes the ``is_public`` column redundant, so it will be removed.
+
+
+Database migrations
+~~~~~~~~~~~~~~~~~~~
+
+1. All rows with ``is_public == 1``:
+
+   - ``visibility = 'public'``
+
+2. For all unique ``image_id`` in ``image_members`` where ``deleted != 1``:
+
+   - ``visibility = 'shared'``
+
+3. For all rows with ``visibility == null``:
+
+   - ``visibility = 'private'``
