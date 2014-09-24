@@ -188,14 +188,25 @@ Notifications impact
 
 None
 
-.. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
+Other end user impact
+---------------------
 
+Python-glanceclient will be updated to expose this feature. An option to
+``glance image-update`` will be added named ``--visibility
+<VISIBILITY_STATUS>``, where ``VISIBILITY_STATUS`` may be one of ``{public,
+private, community}``.
 
-Data model impact
------------------
+For example, to make an image a community image:
 
-Schema changes
-~~~~~~~~~~~~~~
+.. code:: bash
+
+    $ glance image-update --visibility community <IMAGE>
+
+To make the image private again:
+
+.. code:: bash
+
+    $ glance image-update --visibility private <IMAGE>
 
 The visibility of the image will be will be stored in the database in the
 images table in a new column named ``visibility``. This contains one of the
