@@ -90,14 +90,14 @@ Image discovery
 ~~~~~~~~~~~~~~~
 
 Community images will be displayed in an image listing only if the
-``visibility`` filter is set to the value ``'community'``.
+``visibility`` filter is set to the value ``'community'``. ::
 
     GET /v2/images?visibility=community
 
 
 All other appropriate filters will be respected. Of note is the use of an ``owner``
 parameter. This, when supplied together with the ``community`` filter, allows a
-user to request only those community images owned by that particular tenant:
+user to request only those community images owned by that particular tenant: ::
 
     GET /v2/images?visibility=community&owner={tenantId}
 
