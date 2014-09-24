@@ -212,30 +212,21 @@ To make the image private again:
 
     $ glance image-update --visibility private <IMAGE>
 
-The visibility of the image will be will be stored in the database in the
-images table in a new column named ``visibility``. This contains one of the
-values in the set of ``['public', 'private', 'shared', 'community']``.
 
-The default value for ``visibility`` is ``'private'``.
+Performance Impact
+------------------
 
-This change makes the ``is_public`` column redundant, so it will be removed.
+None
 
+Other deployer impact
+---------------------
 
-Database migrations
-~~~~~~~~~~~~~~~~~~~
+None
 
-1. All rows with ``is_public == 1``:
+Developer impact
+----------------
 
-   - ``visibility = 'public'``
-
-2. For all unique ``image_id`` in ``image_members`` where ``deleted != 1``:
-
-   - ``visibility = 'shared'``
-
-3. For all rows with ``visibility == null``:
-
-   - ``visibility = 'private'``
-
+None
 
 Implementation
 ==============
@@ -248,3 +239,44 @@ Primary assignee:
 
 Other contributors:
   iccha-sethi
+
+Work Items
+----------
+
+- Add functionality for storing the community state in the interfaces to both db
+  backends:
+
+  + sqlalchemy
+
+  + simple
+
+- Add functionality to enable this and accepting the image in the api
+
+- Add unit tests to test various inputs to the api
+
+- Add functional tests for the lifecycle of community images
+
+- Update glanceclient with the new option
+
+
+Dependencies
+============
+
+None
+
+Testing
+=======
+
+A tempest test must be added to cover creating a community image and it
+transitioning between public and private states.
+
+
+Documentation Impact
+====================
+
+New features must be documented in both glance and python-glanceclient.
+
+References
+==========
+
+None
