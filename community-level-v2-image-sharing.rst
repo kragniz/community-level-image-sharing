@@ -115,7 +115,7 @@ Alternatives
 ------------
 
 Adding ``"*"`` as a membership record
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative method of implementing this functionality is to add a membership
 record for an image that has a target of ``"*"`` (i.e. it is shared with all
