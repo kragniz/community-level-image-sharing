@@ -5,7 +5,7 @@ Add community-level image sharing
 https://blueprints.launchpad.net/glance/+spec/community-level-v2-image-sharing
 
 Add a new feature which allows a user to share an image with all other tenants.
-These 'community' images do no appear in image listings for a user until that
+These "community" images do no appear in image listings for a user until that
 user has accepted the image.
 
 
@@ -51,86 +51,19 @@ Use cases
 Proposed change
 ===============
 
-An additional value for the ``visibility`` enum will be added in the JSON
-schema, named ``'community'``.  This makes the possible values of
-``visibility``:
+The chosen method of implementing this functionality is to add a membership
+record for an image that has a target of ``"*"`` (i.e. it is shared with all
+tenants) but with ``membership_status = "community"``. This marks it as a
+community image very simply, with few modifications to existing code.
 
-.. code:: python
-
-    ['public', 'private', 'shared', 'community']
-
-An image with with a certain value for ``visibility`` has the following
-properties:
-
-* **public**: All users:
-
-  - have this image in default ``image-list``
-
-  - can see ``image-detail`` for this image
-
-  - can boot from this image
-
-* **private**: Users with ``tenantId == tenantId(owner)`` only:
-
-  - have this image in the default ``image-list``
-
-  - see ``image-detail`` for this image
-
-  - can boot from this image
-
-* **shared**:
-
-  - Users with ``tenantId == tenantId(owner)``
-
-    + have this image in the default ``image-list``
-
-    + see ``image-detail`` for this image
-
-    + can boot from this image
-
-  - Users with ``tenantId`` in the ``member-list`` of the image
-
-    + can see ``image-detail`` for this image
-
-    + can boot from this image
-
-  - Users with ``tenantId`` in the ``member-list`` with ``member_status == 'accepted'``
-
-    + have this image in their default ``image-list``
-
-* **community**:
-
-  - All users:
-
-    + can see ``image-detail`` for this image
-
-    + can boot from this image
-
-  - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
-
-    + have this image in their default ``image-list``
+This respects the current anti-spam provisions in the glance v2 api; when an
+image owner makes the image a "community" image, any other tenant should be
+able to boot an instance from the image, but the image will not show up in any
+tenant's default image-list.
 
 
 Alternatives
 ------------
-
-Adding ``"*"`` as a membership record
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-An alternative method of implementing this functionality is to add a membership
-record for an image that has a target of ``"*"`` (i.e. it is shared with all
-tenants) but with ``membership_status = "community"``.
-
-Community images can then be discovered with the query
-
-::
-
-  GET /v2/images?membership_status=community
-
-
-The downsides to this is it makes filtering for community images harder and
-less explicit.
-
 
 Adding image aliases
 ~~~~~~~~~~~~~~~~~~~~
@@ -141,6 +74,86 @@ create a mechanism to make an image alias, which could point at the newest
 version of the public image. There is a abandoned blueprint for this feature
 [#]_. This, however, is much harder to implement and does not fit with the
 other usecases.
+
+.. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
+
+
+Data model impact
+-----------------
+
+None
+
+REST API impact
+---------------
+
+Image discovery
+~~~~~~~~~~~~~~~
+
+Community images will be displayed in an image listing only if the
+``visibility`` filter is set to the value ``'community'``.
+
+    GET /v2/images?visibility=community
+
+
+All other appropriate filters will be respected. Of note is the use of an ``owner``
+parameter. This, when supplied together with the ``community`` filter, allows a
+user to request only those community images owned by that particular tenant:
+
+    GET /v2/images?visibility=community&owner={tenantId}
+
+
+Accepting a community Image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Having to filter the results each time to find a particular image is
+inconvenient, particularity if that image is often used. To remove this
+inconvenience, users are allowed to "bookmark" a particular community image.
+This image then appears in the user's image-list. This functionality operates
+in much the same way that v2 image sharing works, but the owner of the image
+does not have to maintain relationships with each of the new image consumers.
+
+If a consumer of a community image would like to bookmark it, they must:
+
+1. Add their tenant ID as a member of the community image.
+
+2. Accept the image so it will appear in their image-list
+
+
+For this, the existing image-sharing API calls will be used:
+
+1. Add the tenant ID to the image: ::
+
+       POST /v2/images/{image_id}/members
+
+   Request body: ::
+
+       {"member": "8989447062e04a818baf9e073fd04fa7"}
+
+   The response and other behaviour remains the same as was previously defined
+   for this call.
+
+2. Accept the image: ::
+
+       PUT /v2/images/{image_id}/members/{member_id}
+
+   Request body: ::
+
+       {"status": "accepted"}
+
+   Again, the response and other behaviour remains the same as was previously
+   defined for this call.
+
+
+Security impact
+---------------
+
+Little to none. The only risk is for users to accidentally leak potentially
+sensitive data contained in
+
+Notifications impact
+--------------------
+
+None
 
 .. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
 
