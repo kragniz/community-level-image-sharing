@@ -152,7 +152,9 @@ image's visibility to ``'community'``: ::
 
     PATCH /v2/images/{image_id}
 
-Request body: ::
+Request body:
+
+.. code:: json
 
     [{ "op": "replace", "path": "/visibility", "value": "community" }]
 
@@ -169,7 +171,9 @@ it to ``'private'``: ::
 
     PATCH /v2/images/{image_id}
 
-Request body: ::
+Request body:
+
+.. code:: json
 
     [{ "op": "replace", "path": "/visibility", "value": "private" }]
 
