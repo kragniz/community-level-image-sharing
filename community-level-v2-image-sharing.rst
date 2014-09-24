@@ -174,3 +174,16 @@ Database migrations
 3. For all rows with ``visibility == null``:
 
    - ``visibility = 'private'``
+
+
+Implementation
+==============
+
+Assignee(s)
+-----------
+
+Primary assignee:
+  kragniz
+
+Other contributors:
+  iccha-sethi
