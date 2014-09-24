@@ -144,6 +144,39 @@ For this, the existing image-sharing API calls will be used:
    defined for this call.
 
 
+Making an image a "community image"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The owner of an image can use the existing image-update call, changing the
+image's visibility to ``'community'``: ::
+
+    PATCH /v2/images/{image_id}
+
+Request body: ::
+
+    [{ "op": "replace", "path": "/visibility", "value": "community" }]
+
+The response and other behaviour remains the same as was previously defined for
+this call.
+
+
+Removing a community image
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A community image can be removed from community-level access by also using the
+image-update call. Instead of setting it to ``'community'`` as before, we set
+it to ``'private'``: ::
+
+    PATCH /v2/images/{image_id}
+
+Request body: ::
+
+    [{ "op": "replace", "path": "/visibility", "value": "private" }]
+
+As in all the above cases, the response and other behaviour remains the same as
+was previously defined for this call.
+
+
 Security impact
 ---------------
 
