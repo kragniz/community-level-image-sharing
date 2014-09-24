@@ -55,7 +55,7 @@ An additional value for the ``visibility`` enum will be added in the JSON
 schema, named ``'community'``.  This makes the possible values of
 ``visibility``:
 
-::
+.. code:: python
 
     ['public', 'private', 'shared', 'community']
 
@@ -109,6 +109,40 @@ properties:
   - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
 
     + have this image in their default ``image-list``
+
+
+Alternatives
+------------
+
+Adding "*" as a membership record
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+An alternative method of implementing this functionality is to add a membership
+record for an image that has a target of "*" (i.e. it is shared with all
+tenants) but with ``membership_status = "community"``.
+
+Community images can then be discovered with the query
+
+::
+
+  GET /v2/images?membership_status=community
+
+
+The downsides to this is it makes filtering for community images harder and
+less explicit.
+
+
+Adding image aliases
+~~~~~~~~~~~~~~~~~~~~
+
+A completely different way of solving the usecase for cloud providers
+(discouraging users from using an older version of a public image) could be to
+create a mechanism to make an image alias, which could point at the newest
+version of the public image. There is a abandoned blueprint for this feature
+[#]_. This, however, is much harder to implement and does not fit with the
+other usecases.
+
+.. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
 
 
 Data model impact
