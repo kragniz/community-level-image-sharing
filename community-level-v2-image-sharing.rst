@@ -114,11 +114,11 @@ properties:
 Alternatives
 ------------
 
-Adding "*" as a membership record
+Adding ``"*"`` as a membership record
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An alternative method of implementing this functionality is to add a membership
-record for an image that has a target of "*" (i.e. it is shared with all
+record for an image that has a target of ``"*"`` (i.e. it is shared with all
 tenants) but with ``membership_status = "community"``.
 
 Community images can then be discovered with the query
