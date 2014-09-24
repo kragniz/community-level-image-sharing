@@ -181,7 +181,7 @@ Security impact
 ---------------
 
 Little to none. The only risk is for users to accidentally leak potentially
-sensitive data contained in
+sensitive images by accidentally making them community images.
 
 Notifications impact
 --------------------
