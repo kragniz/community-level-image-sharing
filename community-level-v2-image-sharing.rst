@@ -195,6 +195,10 @@ None
 Other end user impact
 ---------------------
 
+
+Client changes
+~~~~~~~~~~~~~~
+
 Python-glanceclient will be updated to expose this feature. An option to
 ``glance image-update`` will be added named ``--visibility
 <VISIBILITY_STATUS>``, where ``VISIBILITY_STATUS`` may be one of ``{public,
@@ -212,6 +216,12 @@ To make the image private again:
 
     $ glance image-update --visibility private <IMAGE>
 
+
+Membership behaviour
+~~~~~~~~~~~~~~~~~~~~
+
+Moving from community to public retains the list of members the image currently
+contains. This maintains constancy with the current membership behaviour.
 
 Performance Impact
 ------------------
