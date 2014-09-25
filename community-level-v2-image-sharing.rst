@@ -8,16 +8,22 @@ Add a new feature which allows a user to share an image with all other tenants.
 These "community" images do no appear in image listings for a user until that
 user has accepted the image.
 
+This new feature is a simple extension of the current image sharing
+functionality. The sharing is achieved using existing image membership
+mechanisms, and remains consistent with the associated rules.
+
 
 Problem description
 ===================
 
-Currently, images must either be public, private or shared. There is no
-provision for an image to be available for use by users other than the owner of
-the image without making the image either public or explicitly shared by the
-owner of the image with other users. If the number of users who require access
-to the image is large, the overhead of explicit sharing can become a burden on
-the owner of the image.
+Currently, there is no provision for an image to be available for use by users
+other than the owner of the image, unless the image is either made public or
+explicitly shared by the owner of the image with other users. If the number of
+users who require access to the image is large, the overhead of explicit
+sharing can become a burden on the owner of the image.
+
+Public images appear in ``image-list`` for all users, which can be undesirable,
+as shown in the following section.
 
 
 Use cases
