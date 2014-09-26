@@ -4,9 +4,9 @@ Add community-level image sharing
 
 https://blueprints.launchpad.net/glance/+spec/community-level-v2-image-sharing
 
-Add a new feature which allows a user to share an image with all other tenants.
-These "community" images do no appear in image listings for a user until that
-user has accepted the image.
+Add a new feature to the v2 API which allows a user to share an image with all
+other tenants.  These "community" images do not appear in image listings for a
+user until that user has accepted the image.
 
 This new feature is a simple extension of the current image sharing
 functionality. The sharing is achieved using existing image membership
@@ -118,27 +118,12 @@ This image then appears in the user's image-list. This functionality operates
 in much the same way that v2 image sharing works, but the owner of the image
 does not have to maintain relationships with each of the new image consumers.
 
-If a consumer of a community image would like to bookmark it, they must:
-
-1. Add their tenant ID as a member of the community image.
-
-2. Accept the image so it will appear in their image-list
-
+If a consumer of a community image would like to bookmark it, they must accept
+the image so it will appear in their image-list
 
 For this, the existing image-sharing API calls will be used:
 
-1. Add the tenant ID to the image: ::
-
-       POST /v2/images/{image_id}/members
-
-   Request body: ::
-
-       {"member": "8989447062e04a818baf9e073fd04fa7"}
-
-   The response and other behaviour remains the same as was previously defined
-   for this call.
-
-2. Accept the image: ::
+Accept the image: ::
 
        PUT /v2/images/{image_id}/members/{member_id}
 
@@ -146,8 +131,21 @@ For this, the existing image-sharing API calls will be used:
 
        {"status": "accepted"}
 
-   Again, the response and other behaviour remains the same as was previously
-   defined for this call.
+   The response and other behaviour remains the same as was previously defined
+   for this call.
+
+
+The use may also reject the image: ::
+
+       PUT /v2/images/{image_id}/members/{member_id}
+
+   Request body: ::
+
+       {"status": "rejected"}
+
+   This removes the image from the list of images filtered by community
+   visibility.
+
 
 
 Making an image a "community image"
