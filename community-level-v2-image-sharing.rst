@@ -162,6 +162,22 @@ As in all the above cases, the response and other behaviour remains the same as
 was previously defined for this call.
 
 
+Discoverable vs non-discoverable community images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A community image created by a non-privileged user should have some mechanism
+for being retired. A third party publishing images is unlikely to want to
+support the images they create indefinitely, creating the problem community
+images aims to fix for cloud providers.
+
+To fill this need, community images have an additional property:
+``discoverable``. This is a boolean value. When set to True, the community
+image appears in the listing of all community images (``GET
+/v2/images?visibility=community``). When false, the image is not discoverable
+by other users through that API call. The image remains accessible if the ID is
+known, however.
+
+
 Security impact
 ---------------
 
