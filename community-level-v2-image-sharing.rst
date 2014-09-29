@@ -241,8 +241,8 @@ will be created, which has a default configuration of ``[role:admin]``:
 
 - ``publicize_community_image`` - Share image with all tenants
 
-  + ``PATCH /v2/images/{image_id}`` with attribute
-    ``visibility`` = ``community``
+  + ``PATCH /v2/images/{image_id}`` with ``path`` =  ``/visibility`` and
+    ``value`` = ``community``
 
 Developer impact
 ----------------
