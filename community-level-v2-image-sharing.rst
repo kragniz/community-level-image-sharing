@@ -188,8 +188,7 @@ was previously defined for this call.
 Security impact
 ---------------
 
-Little to none. The only risk is for users to accidentally leak potentially
-sensitive images by accidentally making them community images.
+See "other deployer impact".
 
 Notifications impact
 --------------------
@@ -235,7 +234,15 @@ None
 Other deployer impact
 ---------------------
 
-None
+The ability to provide images to other users has the potential for abuse. A
+user could provide a malicious image to a large audience. For this reason, the
+ability to create community images is moderated using policy.json. A new rule
+will be created, which has a default configuration of ``[role:admin``:
+
+- ``publicize_community_image`` - Share image with all tenants
+
+  + ``PATCH /v2/images/{image_id}`` with attribute
+    ``visibility`` = ``community``
 
 Developer impact
 ----------------
