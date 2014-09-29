@@ -177,6 +177,18 @@ image appears in the listing of all community images (``GET
 by other users through that API call. The image remains accessible if the ID is
 known, however.
 
+This can be changed by calling: ::
+
+    PUT /v2/images/{image_id}/members/community
+
+with the request body:
+
+.. code:: json
+
+    {"discoverable": "<DISCOVERABLE_STATUS>"}
+
+where <DISCOVERABLE_STATUS> is either ``true`` or ``false``.
+
 
 Security impact
 ---------------
