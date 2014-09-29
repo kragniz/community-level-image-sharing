@@ -237,7 +237,7 @@ Other deployer impact
 The ability to provide images to other users has the potential for abuse. A
 user could provide a malicious image to a large audience. For this reason, the
 ability to create community images is moderated using policy.json. A new rule
-will be created, which has a default configuration of ``[role:admin``:
+will be created, which has a default configuration of ``[role:admin]``:
 
 - ``publicize_community_image`` - Share image with all tenants
 
