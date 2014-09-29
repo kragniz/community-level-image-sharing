@@ -53,8 +53,8 @@ Proposed change
 ===============
 
 The chosen method of implementing this functionality is to add a membership
-record for an image that has a target of ``"*"`` (i.e. it is shared with all
-tenants) but with ``membership_status = "community"``. This marks it as a
+record for an image that has a target of ``"community"`` (i.e. it is shared
+with all tenants) with ``membership_status = "community"``. This marks it as a
 community image very simply and requires few modifications to existing code.
 
 This respects the current anti-spam provisions in the glance v2 api; when an
@@ -74,7 +74,7 @@ A completely different way of solving the usecase for cloud providers
 create a mechanism to make an image alias, which could point at the newest
 version of the public image. There is a abandoned blueprint for this feature
 [#]_. This, however, is much harder to implement and does not fit with the
-other usecases.
+other use cases.
 
 .. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
 
@@ -120,42 +120,31 @@ For this, the existing image-sharing API calls will be used:
 
 Accept the image: ::
 
-       PUT /v2/images/{image_id}/members/{member_id}
-
-   Request body: ::
-
-       {"status": "accepted"}
-
-   The response and other behaviour remains the same as was previously defined
-   for this call.
-
-
-The use may also reject the image: ::
-
-       PUT /v2/images/{image_id}/members/{member_id}
-
-   Request body: ::
-
-       {"status": "rejected"}
-
-   This removes the image from the list of images filtered by community
-   visibility.
-
-
-
-Making an image a "community image"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The owner of an image can use the existing image-update call, changing the
-image's visibility to ``'community'``: ::
-
-    PATCH /v2/images/{image_id}
+       PUT /v2/images/{image_id}/members/community
 
 Request body:
 
 .. code:: json
 
-    [{ "op": "replace", "path": "/visibility", "value": "community" }]
+   {"status": "accepted"}
+
+The response and other behaviour remains the same as was previously defined for
+this call.
+
+
+Making an image a "community image"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The owner of an image can use the existing image sharing call, sharing the
+image with the special tenant ``"community"``: ::
+
+    POST /v2/images/{imageId}/members
+
+Request body:
+
+.. code:: json
+
+    {"member": "community"}
 
 The response and other behaviour remains the same as was previously defined for
 this call.
@@ -164,17 +153,10 @@ this call.
 Removing a community image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A community image can be removed from community-level access by also using the
-image-update call. Instead of setting it to ``'community'`` as before, we set
-it to ``'private'``: ::
+A community image can be removed from community-level access by removing the
+special ``community`` tenant: ::
 
-    PATCH /v2/images/{image_id}
-
-Request body:
-
-.. code:: json
-
-    [{ "op": "replace", "path": "/visibility", "value": "private" }]
+    DELETE /v2/images/{image_id}/members/community
 
 As in all the above cases, the response and other behaviour remains the same as
 was previously defined for this call.
@@ -236,8 +218,7 @@ will be created, which has a default configuration of ``[role:admin]``:
 
 - ``publicize_community_image`` - Share image with all tenants
 
-  + ``PATCH /v2/images/{image_id}`` with ``path`` =  ``/visibility`` and
-    ``value`` = ``community``
+  + ``POST /v2/images/{image_id}/members`` with ``member`` = ``community``
 
 Developer impact
 ----------------
