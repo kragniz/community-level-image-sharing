@@ -90,17 +90,22 @@ REST API impact
 Image discovery
 ~~~~~~~~~~~~~~~
 
-Community images will be displayed in an image listing only if the
-``visibility`` filter is set to the value ``'community'``. ::
+Community images will be displayed in an image listing of all the images shared
+with the current user. ::
 
-    GET /v2/images?visibility=community
+    GET /v2/images?visibility=shared
+
+
+To list only community images, also add the filter ``is_community=true``: ::
+
+    GET /v2/images?visibility=shared&is_community=true
 
 
 All other appropriate filters will be respected. Of note is the use of an ``owner``
 parameter. This, when supplied together with the ``community`` filter, allows a
 user to request only those community images owned by that particular tenant: ::
 
-    GET /v2/images?visibility=community&owner={tenantId}
+    GET /v2/images?visibility=shared&is_community=true&owner={tenantId}
 
 
 Accepting a community Image
@@ -261,9 +266,6 @@ Assignee(s)
 
 Primary assignee:
   kragniz
-
-Other contributors:
-  iccha-sethi
 
 Work Items
 ----------
