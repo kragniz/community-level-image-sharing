@@ -102,7 +102,7 @@ To list only community images, also add the filter ``is_community=true``: ::
 
 
 All other appropriate filters will be respected. Of note is the use of an ``owner``
-parameter. This, when supplied together with the ``community`` filter, allows a
+parameter. This, when supplied together with the ``is_community`` filter, allows a
 user to request only those community images owned by that particular tenant: ::
 
     GET /v2/images?visibility=shared&is_community=true&owner={tenantId}
@@ -115,8 +115,9 @@ Having to filter the results each time to find a particular image is
 inconvenient, particularity if that image is often used. To remove this
 inconvenience, users are allowed to "bookmark" a particular community image.
 This image then appears in the user's image-list. This functionality operates
-in much the same way that v2 image sharing works, but the owner of the image
-does not have to maintain relationships with each of the new image consumers.
+in the same way that v2 image sharing works, but the owner of the image does
+not have to explicitly maintain relationships with each of the new image
+consumers.
 
 If a consumer of a community image would like to bookmark it, they must accept
 the image so it will appear in their image-list
@@ -163,36 +164,10 @@ special ``community`` tenant: ::
 
     DELETE /v2/images/{image_id}/members/community
 
+This does not change or alter any of the other tenants the image has been shared with.
+
 As in all the above cases, the response and other behaviour remains the same as
 was previously defined for this call.
-
-
-Discoverable vs non-discoverable community images
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A community image created by a non-privileged user should have some mechanism
-for being retired. A third party publishing images is unlikely to want to
-support the images they create indefinitely, creating the problem community
-images aims to fix for cloud providers.
-
-To fill this need, community images have an additional property:
-``discoverable``. This is a boolean value. When set to True, the community
-image appears in the listing of all community images (``GET
-/v2/images?visibility=community``). When false, the image is not discoverable
-by other users through that API call. The image remains accessible if the ID is
-known, however.
-
-This can be changed by calling: ::
-
-    PUT /v2/images/{image_id}/members/community
-
-with the request body:
-
-.. code:: json
-
-    {"discoverable": "<DISCOVERABLE_STATUS>"}
-
-where <DISCOVERABLE_STATUS> is either ``true`` or ``false``.
 
 
 Security impact
