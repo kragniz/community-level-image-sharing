@@ -90,22 +90,19 @@ REST API impact
 Image discovery
 ~~~~~~~~~~~~~~~
 
-Community images will be displayed in an image listing of all the images shared
-with the current user. ::
+Community images will be displayed in an image listing when the visibility:w
 
-    GET /v2/images?visibility=shared
+filter is set to ``community``. ::
 
-
-To list only community images, also add the filter ``is_community=true``: ::
-
-    GET /v2/images?visibility=shared&is_community=true
+    GET /v2/images?visibility=community
 
 
-All other appropriate filters will be respected. Of note is the use of an ``owner``
-parameter. This, when supplied together with the ``is_community`` filter, allows a
-user to request only those community images owned by that particular tenant: ::
+All other appropriate filters will be respected. Of note is the use of an
+``owner`` parameter. This, when supplied together with the
+``visibility=community`` filter, allows a user to request only those community
+images owned by that particular tenant: ::
 
-    GET /v2/images?visibility=shared&is_community=true&owner={tenantId}
+    GET /v2/images?visibility=community&owner={owner_tenant_id}
 
 
 Accepting a community Image
@@ -126,7 +123,7 @@ For this, the existing image-sharing API calls will be used:
 
 Accept the image: ::
 
-       PUT /v2/images/{image_id}/members/community
+       PUT /v2/images/{image_id}/members/{consumer_tenant_id}
 
 Request body:
 
@@ -144,7 +141,7 @@ Making an image a "community image"
 The owner of an image can use the existing image sharing call, sharing the
 image with the special tenant ``"community"``: ::
 
-    POST /v2/images/{imageId}/members
+    POST /v2/images/{image_id}/members
 
 Request body:
 
@@ -163,12 +160,6 @@ A community image can be removed from community-level access by removing the
 special ``community`` tenant: ::
 
     DELETE /v2/images/{image_id}/members/community
-
-This does not change or alter any of the other tenants the image has been shared with.
-
-As in all the above cases, the response and other behaviour remains the same as
-was previously defined for this call.
-
 
 Security impact
 ---------------
