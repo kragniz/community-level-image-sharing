@@ -82,7 +82,32 @@ other use cases.
 Data model impact
 -----------------
 
-None
+Schema changes
+~~~~~~~~~~~~~~
+
+The visibility of the image will be will be stored in the database in the
+images table in a new column named ``visibility``. This contains one of the
+values in the set of ``['public', 'private', 'shared', 'community']``.
+
+The default value for ``visibility`` is ``'private'``.
+
+This change makes the ``is_public`` column redundant, so it will be removed.
+
+
+Database migrations
+~~~~~~~~~~~~~~~~~~~
+
+1. All rows with ``is_public == 1``:
+
+   - ``visibility = 'public'``
+
+2. For all unique ``image_id`` in ``image_members`` where ``deleted != 1``:
+
+   - ``visibility = 'shared'``
+
+3. For all rows with ``visibility == null``:
+
+   - ``visibility = 'private'``
 
 REST API impact
 ---------------
