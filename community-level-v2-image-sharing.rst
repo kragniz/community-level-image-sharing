@@ -57,6 +57,66 @@ Public images appear in ``image-list`` for all users, which can be undesirable:
 Proposed change
 ===============
 
+An additional value for the ``visibility`` enum will be added in the JSON
+schema, named ``'community'``.  This makes the possible values of
+``visibility``:
+
+.. code:: python
+
+    ['public', 'private', 'shared', 'community']
+
+An image with with a certain value for ``visibility`` has the following
+properties:
+
+* **public**: All users:
+
+  - have this image in default ``image-list``
+
+  - can see ``image-detail`` for this image
+
+  - can boot from this image
+
+* **private**: Users with ``tenant_id == owner_tenant_id`` only:
+
+  - have this image in the default ``image-list``
+
+  - see ``image-detail`` for this image
+
+  - can boot from this image
+
+* **shared**:
+
+  - Users with ``tenant_id == owner_tenant_id``
+
+    + have this image in the default ``image-list``
+
+    + see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` of the image
+
+    + can see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` with ``member_status == 'accepted'``
+
+    + have this image in their default ``image-list``
+
+* **community**:
+
+  - All users:
+
+    + can see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
+
+    + have this image in their default ``image-list``
+
+
 Alternatives
 ------------
 
