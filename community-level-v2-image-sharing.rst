@@ -8,9 +8,8 @@ Add a new feature to the v2 API which allows a user to share an image with all
 other tenants.  These "community" images do not appear in image listings for a
 user until that user has accepted the image.
 
-This new feature is a simple extension of the current image sharing
-functionality. The sharing is achieved using existing image membership
-mechanisms, and remains consistent with the associated rules.
+This new feature adds a new value for the visibility of an image to the
+underlying data model, named ``community``.
 
 
 Problem description
@@ -52,17 +51,6 @@ Public images appear in ``image-list`` for all users, which can be undesirable:
 Proposed change
 ===============
 
-The chosen method of implementing this functionality is to add a membership
-record for an image that has a target of ``"community"`` (i.e. it is shared
-with all tenants) with ``membership_status = "community"``. This marks it as a
-community image very simply and requires few modifications to existing code.
-
-This respects the current anti-spam provisions in the glance v2 api; when an
-image owner makes an image a "community" image, any other tenant should be
-able to boot an instance from that image, but the image will not show up in any
-tenant's default image-list.
-
-
 Alternatives
 ------------
 
@@ -77,6 +65,23 @@ version of the public image. There is a abandoned blueprint for this feature
 other use cases.
 
 .. [#] https://blueprints.launchpad.net/glance/+spec/glance-image-aliases
+
+
+Adding a special case of image sharing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Another method of implementing this functionality is to add a membership record
+for an image that has a target of ``"community"`` (i.e. it is shared with all
+tenants) with ``membership_status = "community"``. This marks it as a community
+image very simply and requires few modifications to existing code.
+
+This respects the current anti-spam provisions in the glance v2 api; when an
+image owner makes an image a "community" image, any other tenant should be able
+to boot an instance from that image, but the image will not show up in any
+tenant's default image-list.
+
+The downsides to using this method are a few corner cases which result in
+surprising API calls and some less than desirable mappings between api level
+and data model level values of visibility.
 
 
 Data model impact
