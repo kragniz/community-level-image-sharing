@@ -41,15 +41,16 @@ because:
    relation that doesn't exist between image consumers and the cloud provider.
 
 2. A cloud provider wants to discourage users from using a public image that is
-   getting old, for example an image which is missing some security patches or is
-   no longer supported by the vendor, but doesn't want to delete the image because
-   some users may still require it. Users could need the old image to rebuild a
-   server, or because they have custom patches for that, particular image.
+   getting old. For example, an image which is missing some security patches or
+   is no longer supported by the vendor. The cloud provider doesn't want to
+   delete the image because some users still require it. Users could need the
+   old image to rebuild a server, or because they have custom patches for that
+   particular image.
 
-   In either case, the vendor could make the image a "community' image and
-   alleviate the challenges presented above. This means that:
+In both cases, the vendor can make the image a "community" image and alleviate
+the challenges presented above. This means that:
 
-   a) The community image won't appear in user's default image lists. This
+   a) The community image won't appear in users' default image lists. This
    means they won't know about it unless they are motivated to seek it out, for
    example by asking other users for the UUID.
 
@@ -71,25 +72,21 @@ schema, named ``'community'``.  This makes the possible values of
 An image with with a certain value for ``visibility`` has the following
 properties:
 
-* **public**: All users:
+Images with these ``visibility`` values have the following properties:
 
-  - have this image in default ``image-list``
+* **public**:
 
-  - can see ``image-detail`` for this image
+  - Who: all users:
 
-  - can boot from this image
+    + have this image in the default ``image-list``
 
-* **private**: Users with ``tenant_id == owner_tenant_id`` only:
+    + can see ``image-detail`` for this image
 
-  - have this image in the default ``image-list``
+    + can boot from this image
 
-  - see ``image-detail`` for this image
+* **private**:
 
-  - can boot from this image
-
-* **shared**:
-
-  - Users with ``tenant_id == owner_tenant_id``
+  - Who: users with ``tenant_id == owner_tenant_id`` only:
 
     + have this image in the default ``image-list``
 
@@ -97,27 +94,38 @@ properties:
 
     + can boot from this image
 
-  - Users with ``tenantId`` in the ``member-list`` of the image
+* **shared**:
+
+  - Who: users with ``tenant_id == owner_tenant_id``
+
+    + have this image in the default ``image-list``
+
+    + see ``image-detail`` for this image
+
+    + can boot from this image
+
+  - Who: users with ``tenant_id`` in the ``member-list`` of the image
 
     + can see ``image-detail`` for this image
 
     + can boot from this image
 
-  - Users with ``tenantId`` in the ``member-list`` with ``member_status == 'accepted'``
+  - Who: users with ``tenantId`` in the ``member-list`` with ``member_status == 'accepted'``
 
     + have this image in their default ``image-list``
 
 * **community**:
 
-  - All users:
+  - Who: all users:
 
     + can see ``image-detail`` for this image
 
     + can boot from this image
 
-  - Users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
+  - Who: users with ``tenantId`` in the ``member-list`` of the image with ``member_status == 'accepted'``
 
     + have this image in their default ``image-list``
+      TODO
 
 
 Alternatives
@@ -143,14 +151,14 @@ for an image that has a target of ``"community"`` (i.e. it is shared with all
 tenants) with ``membership_status = "community"``. This marks it as a community
 image very simply and requires few modifications to existing code.
 
-This respects the current anti-spam provisions in the glance v2 api; when an
+This respects the current anti-spam provisions in the glance v2 API. When an
 image owner makes an image a "community" image, any other tenant should be able
-to boot an instance from that image, but the image will not show up in any
+to boot an instance from that image. The image will not show up in any
 tenant's default image-list.
 
-The downsides to using this method are a few corner cases which result in
-surprising API calls and some less than desirable mappings between api level
-and data model level values of visibility.
+This method can cause a few corner cases which result in surprising API calls
+and some less than desirable mappings between data model level and API level
+values of visibility.
 
 
 Data model impact
@@ -159,9 +167,9 @@ Data model impact
 Schema changes
 ~~~~~~~~~~~~~~
 
-The visibility of the image will be will be stored in the database in the
-images table in a new column named ``visibility``. This contains one of the
-values in the set of ``['public', 'private', 'shared', 'community']``.
+The visibility of the image will be stored in the database within the images
+table inside a new column named ``visibility``. The visibility will be in the
+set of ``['public', 'private', 'shared', 'community']``.
 
 The default value for ``visibility`` is ``'private'``.
 
@@ -189,8 +197,7 @@ REST API impact
 Image discovery
 ~~~~~~~~~~~~~~~
 
-Community images will be displayed in an image listing when the visibility:w
-
+Community images will be displayed in an image listing when the visibility
 filter is set to ``community``. ::
 
     GET /v2/images?visibility=community
@@ -250,12 +257,12 @@ The response and other behaviour remains the same as was previously defined for
 this call.
 
 
-Removing a community image
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Removing community level access from an image
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A community image can be removed from community-level access by also using the
-image-update call. Instead of setting it to ``'community'`` as before, we set
-it to ``'private'``: ::
+An admin or the owner of an image can remove community-level access from an
+image by also using the image-update call. Instead of setting it to
+``'community'`` as before, we set it to ``'private'``: ::
 
     PATCH /v2/images/{image_id}
 
@@ -341,7 +348,7 @@ Primary assignee:
 Work Items
 ----------
 
-- Refactor db api to use ``visibility`` rather than ``is_public``
+- Refactor db API to use ``visibility`` rather than ``is_public``
 
 - Add functionality for storing the community state in the interfaces to both db
   backends:
@@ -350,13 +357,13 @@ Work Items
 
   + simple
 
-- Add functionality to enable this and accept the image using the api
+- Add functionality to enable this and accept the image using the API
 
-- Add unit tests to test various inputs to the api
+- Add unit tests to test various inputs to the API
 
 - Add functional tests for the lifecycle of community images
 
-- Update glanceclient to use the new api functionality
+- Update glanceclient to use the new API functionality
 
 
 Dependencies
