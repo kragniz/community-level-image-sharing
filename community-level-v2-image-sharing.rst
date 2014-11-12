@@ -12,7 +12,9 @@ https://blueprints.launchpad.net/glance/+spec/community-level-v2-image-sharing
 
 Add a new feature to the v2 API which allows a user to share an image with all
 other tenants.  These "community" images do not appear in image listings for a
-user until that user has accepted the image.
+user until that user has accepted the image.  This allows image owners to
+easily make images available to a wide community of users, without the burden
+of manually sharing these images with each individual user.
 
 This new feature adds a new value for the visibility of an image to the
 underlying data model, named ``community``.
@@ -27,7 +29,8 @@ explicitly shared by the owner of the image with other users. If the number of
 users who require access to the image is large, the overhead of explicit
 sharing can become a burden on the owner of the image.
 
-Public images appear in ``image-list`` for all users, which can be undesirable:
+Public images appear in ``image-list`` for all users. This can be undesirable
+because:
 
 1. An open source project wants to make a prepared VM image available so users
    simply boot an instance from that image to use the project's software. The
