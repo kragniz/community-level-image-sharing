@@ -234,16 +234,14 @@ this call.
 Making an image a "community image"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The owner of an image can use the existing image sharing call, sharing the
-image with the special tenant ``"community"``: ::
+An admin or the owner of an image (depending on policy settings) can use the
+existing image-update call, changing the image's visibility to ``'community'``: ::
 
-    POST /v2/images/{image_id}/members
+    PATCH /v2/images/{image_id}
 
-Request body:
+Request body: ::
 
-.. code:: json
-
-    {"member": "community"}
+    [{ "op": "replace", "path": "/visibility", "value": "community" }]
 
 The response and other behaviour remains the same as was previously defined for
 this call.
@@ -252,10 +250,18 @@ this call.
 Removing a community image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A community image can be removed from community-level access by removing the
-special ``community`` tenant: ::
+A community image can be removed from community-level access by also using the
+image-update call. Instead of setting it to ``'community'`` as before, we set
+it to ``'private'``: ::
 
-    DELETE /v2/images/{image_id}/members/community
+    PATCH /v2/images/{image_id}
+
+Request body: ::
+
+    [{ "op": "replace", "path": "/visibility", "value": "private" }]
+
+As in all the above cases, the response and other behaviour remains the same as
+was previously defined for this call.
 
 Security impact
 ---------------
@@ -332,6 +338,8 @@ Primary assignee:
 Work Items
 ----------
 
+- Refactor db api to use ``visibility`` rather than ``is_public``
+
 - Add functionality for storing the community state in the interfaces to both db
   backends:
 
@@ -339,13 +347,13 @@ Work Items
 
   + simple
 
-- Add functionality to enable this and accepting the image in the api
+- Add functionality to enable this and accept the image using the api
 
 - Add unit tests to test various inputs to the api
 
 - Add functional tests for the lifecycle of community images
 
-- Update glanceclient with the new option
+- Update glanceclient to use the new api functionality
 
 
 Dependencies
