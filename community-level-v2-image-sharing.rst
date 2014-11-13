@@ -347,6 +347,14 @@ Assignee(s)
 Primary assignee:
   kragniz
 
+
+Reviewers
+=========
+
+Core reviewer(s):
+  brian-rosmaita
+  stuart-mclaren
+
 Work Items
 ----------
 
