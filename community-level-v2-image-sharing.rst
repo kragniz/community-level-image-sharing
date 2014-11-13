@@ -244,7 +244,7 @@ this call.
 Making an image a "community image"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An admin or the owner of an image (depending on policy settings) can use the
+An admin or owner of an image (depending on policy settings) can use the
 existing image-update call, changing the image's visibility to ``'community'``: ::
 
     PATCH /v2/images/{image_id}
@@ -260,9 +260,9 @@ this call.
 Removing community level access from an image
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An admin or the owner of an image can remove community-level access from an
-image by also using the image-update call. Instead of setting it to
-``'community'`` as before, we set it to ``'private'``: ::
+An admin or owner of an image can remove community-level access from an image
+by using the image-update call. Instead of setting it to ``'community'`` as
+before, we set it to ``'private'``: ::
 
     PATCH /v2/images/{image_id}
 
@@ -329,7 +329,9 @@ will be created, which has a default configuration of ``[role:admin]``:
 
 - ``publicize_community_image`` - Share image with all tenants
 
-  + ``POST /v2/images/{image_id}/members`` with ``member`` = ``community``
+  + ``PATCH /v2/images/{image_id}`` with request body::
+
+      [{ "op": "replace", "path": "/visibility", "value": "private" }]
 
 Developer impact
 ----------------
